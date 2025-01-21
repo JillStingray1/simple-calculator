@@ -108,14 +108,13 @@ impl Calculator {
                 Multiply => output_stack.pop().unwrap() * output_stack.pop().unwrap(),
                 Decimal => {
                     let decimal = output_stack.pop().unwrap();
-                    let whole = output_stack.pop().unwrap();
                     let mut digits = 1;
                     let mut temp = decimal;
                     while temp > 10.0 {
                         temp = temp / 10.0;
                         digits += 1;
                     }
-                    whole + decimal * f64::powi(10.0, -digits)
+                    output_stack.pop().unwrap() + decimal * f64::powi(10.0, -digits)
                 }
             };
             output_stack.push(next_value)
