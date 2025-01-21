@@ -1,6 +1,7 @@
 #[derive(Debug)]
 pub enum Inputs {
-    Number(i64),
+    Number(f64),
+    Decimal,
     Add,
     Subtract,
     Multiply,
@@ -14,6 +15,7 @@ impl Inputs {
             Add => 1,
             Subtract => 1,
             Multiply => 2,
+            Decimal => 3,
         }
     }
 }

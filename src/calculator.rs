@@ -25,6 +25,7 @@ impl Calculator {
             Number(x) => self
                 .display_value
                 .push(char::from_digit(*x as u32, 10).unwrap()),
+            Decimal => self.display_value.push('.'),
             Add => self.display_value.push('+'),
             Subtract => self.display_value.push('-'),
             Multiply => self.display_value.push('*'),
@@ -61,7 +62,7 @@ impl Calculator {
             Number(new_digit) => match self.inputs.pop_back() {
                 Some(Number(existing_digits)) => {
                     self.inputs
-                        .push_back(Number(new_digit + existing_digits * 10));
+                        .push_back(Number(new_digit + existing_digits * 10.0));
                     self.update_display(&input);
                 }
                 Some(previous) => {
@@ -105,6 +106,17 @@ impl Calculator {
                 Add => output_stack.pop().unwrap() + output_stack.pop().unwrap(),
                 Subtract => output_stack.pop().unwrap() - output_stack.pop().unwrap(),
                 Multiply => output_stack.pop().unwrap() * output_stack.pop().unwrap(),
+                Decimal => {
+                    let decimal = output_stack.pop().unwrap();
+                    let whole = output_stack.pop().unwrap();
+                    let mut digits = 1;
+                    let mut temp = decimal;
+                    while temp > 10.0 {
+                        temp = temp / 10.0;
+                        digits += 1;
+                    }
+                    whole + decimal * f64::powi(10.0, -digits)
+                }
             };
             output_stack.push(next_value)
         }
@@ -130,19 +142,19 @@ impl App for Calculator {
                     .add_sized([100.0, 50.0], egui::Button::new("7"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(7))
+                    self.add_input(Inputs::Number(7.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("8"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(8))
+                    self.add_input(Inputs::Number(8.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("9"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(9))
+                    self.add_input(Inputs::Number(9.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("*"))
@@ -155,19 +167,19 @@ impl App for Calculator {
                     .add_sized([100.0, 50.0], egui::Button::new("4"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(4))
+                    self.add_input(Inputs::Number(4.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("5"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(5))
+                    self.add_input(Inputs::Number(5.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("6"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(6))
+                    self.add_input(Inputs::Number(6.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("-"))
@@ -180,19 +192,19 @@ impl App for Calculator {
                     .add_sized([100.0, 50.0], egui::Button::new("1"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(1))
+                    self.add_input(Inputs::Number(1.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("2"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(2))
+                    self.add_input(Inputs::Number(2.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("3"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(3))
+                    self.add_input(Inputs::Number(3.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("+"))
@@ -208,10 +220,16 @@ impl App for Calculator {
                     self.clear();
                 }
                 if ui
+                    .add_sized([100.0, 50.0], egui::Button::new("."))
+                    .clicked()
+                {
+                    self.add_input(Inputs::Decimal);
+                }
+                if ui
                     .add_sized([100.0, 50.0], egui::Button::new("0"))
                     .clicked()
                 {
-                    self.add_input(Inputs::Number(0))
+                    self.add_input(Inputs::Number(0.0))
                 }
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("="))
