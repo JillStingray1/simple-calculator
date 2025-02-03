@@ -5,6 +5,7 @@ pub enum Inputs {
     Add,
     Subtract,
     Multiply,
+    Divide,
 }
 
 impl Inputs {
@@ -15,6 +16,7 @@ impl Inputs {
             Add => 1,
             Subtract => 1,
             Multiply => 2,
+            Divide => 2,
             Decimal => 3,
         }
     }
