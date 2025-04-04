@@ -29,6 +29,7 @@ impl Calculator {
             Add => self.display_value.push('+'),
             Subtract => self.display_value.push('-'),
             Multiply => self.display_value.push('*'),
+            Divide => self.display_value.push('/'),
         }
     }
 
@@ -103,18 +104,25 @@ impl Calculator {
         for value in postfix_vec.iter() {
             let next_value = match value {
                 Number(x) => *x,
-                Add => output_stack.pop().unwrap() + output_stack.pop().unwrap(),
-                Subtract => output_stack.pop().unwrap() - output_stack.pop().unwrap(),
-                Multiply => output_stack.pop().unwrap() * output_stack.pop().unwrap(),
-                Decimal => {
-                    let decimal = output_stack.pop().unwrap();
-                    let mut digits = 1;
-                    let mut temp = decimal;
-                    while temp > 10.0 {
-                        temp = temp / 10.0;
-                        digits += 1;
+                operator => {
+                    let right = output_stack.pop().unwrap();
+                    let left = output_stack.pop().unwrap();
+                    match operator {
+                        Add => left + right,
+                        Subtract => left - right,
+                        Multiply => left * right,
+                        Divide => left / right,
+                        Decimal => {
+                            let mut digits = 1;
+                            let mut temp = right;
+                            while temp > 10.0 {
+                                temp = temp / 10.0;
+                                digits += 1;
+                            }
+                            left + right * f64::powi(10.0, -digits)
+                        }
+                        _ => 0.0,
                     }
-                    output_stack.pop().unwrap() + decimal * f64::powi(10.0, -digits)
                 }
             };
             output_stack.push(next_value)
@@ -230,6 +238,12 @@ impl App for Calculator {
                 {
                     self.add_input(Inputs::Number(0.0))
                 }
+                if ui
+                    .add_sized([100.0, 50.0], egui::Button::new("/"))
+                    .clicked()
+                {
+                    self.add_input(Divide);
+                };
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("="))
                     .clicked()
