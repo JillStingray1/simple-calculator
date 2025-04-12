@@ -1,9 +1,6 @@
 use crate::inputs::Inputs;
 use crate::inputs::Inputs::*;
-use eframe::{
-    egui::{self},
-    App,
-};
+
 use std::collections::VecDeque;
 
 // Logic for the evaluation of the calculator.
@@ -18,6 +15,11 @@ impl Calculator {
             display_value: String::from(""),
             inputs: VecDeque::new(),
         }
+    }
+
+    pub fn clear(&mut self) {
+        self.inputs.clear();
+        self.display_value.clear();
     }
 
     fn update_display(&mut self, input: &Inputs) {
@@ -76,18 +78,20 @@ impl Calculator {
                     self.inputs.push_back(input);
                 }
             },
-            _ => match self.inputs.pop_back() {
-                Some(Number(previous)) => {
-                    self.update_display(&input);
-                    self.inputs.push_back(Number(previous));
-                    self.inputs.push_back(input)
+            _ => {
+                match self.inputs.pop_back() {
+                    Some(Number(previous)) => {
+                        self.update_display(&input);
+                        self.inputs.push_back(Number(previous));
+                        self.inputs.push_back(input)
+                    }
+                    Some(x) => {
+                        self.inputs.push_back(x);
+                        eprintln!("2 adjacent operators, try inputing a number between")
+                    }
+                    None => eprintln!("Operator inputed with no numbers"),
                 }
-                Some(x) => {
-                    self.inputs.push_back(x);
-                    eprintln!("2 adjacent operators, try inputing a number between")
-                }
-                None => eprintln!("Operator inputed with no numbers"),
-            },
+            }
         }
     }
 
@@ -130,129 +134,5 @@ impl Calculator {
         let result = output_stack.pop().unwrap();
         self.inputs.push_back(Number(result));
         self.display_value = result.to_string();
-    }
-
-    pub fn clear(&mut self) {
-        self.inputs = VecDeque::new();
-        self.display_value = String::from("");
-    }
-}
-
-// The UI for the calculator
-impl App for Calculator {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        ctx.set_pixels_per_point(1.5);
-        egui::CentralPanel::default().show(ctx, |ui| {
-            ui.label(&self.display_value);
-            egui::Grid::new("grid").show(ui, |ui| {
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("7"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(7.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("8"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(8.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("9"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(9.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("*"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Multiply)
-                }
-                ui.end_row();
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("4"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(4.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("5"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(5.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("6"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(6.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("-"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Subtract)
-                }
-                ui.end_row();
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("1"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(1.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("2"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(2.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("3"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(3.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("+"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Add)
-                }
-                ui.end_row();
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("clr"))
-                    .clicked()
-                {
-                    self.clear();
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("."))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Decimal);
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("0"))
-                    .clicked()
-                {
-                    self.add_input(Inputs::Number(0.0))
-                }
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("/"))
-                    .clicked()
-                {
-                    self.add_input(Divide);
-                };
-                if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("="))
-                    .clicked()
-                {
-                    self.evaluate();
-                };
-            });
-
-            // dbg!(&self.inputs);
-        });
     }
 }
