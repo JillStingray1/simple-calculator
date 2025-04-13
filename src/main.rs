@@ -72,6 +72,12 @@ impl App for Calculator {
                 {
                     self.add_input(Subtract)
                 }
+                if ui
+                    .add_sized([100.0, 50.0], egui::Button::new("("))
+                    .clicked()
+                {
+                    self.add_input(RightParen)
+                }
                 ui.end_row();
                 if ui
                     .add_sized([100.0, 50.0], egui::Button::new("1"))
@@ -96,6 +102,12 @@ impl App for Calculator {
                     .clicked()
                 {
                     self.add_input(Add)
+                }
+                if ui
+                    .add_sized([100.0, 50.0], egui::Button::new("("))
+                    .clicked()
+                {
+                    self.add_input(LeftParen)
                 }
                 ui.end_row();
                 if ui

@@ -32,6 +32,8 @@ impl Calculator {
             Subtract => self.display_value.push('-'),
             Multiply => self.display_value.push('*'),
             Divide => self.display_value.push('/'),
+            LeftParen => self.display_value.push('('),
+            RightParen => self.display_value.push(')'),
         }
     }
 
@@ -41,6 +43,8 @@ impl Calculator {
         while self.inputs.len() > 0 {
             match self.inputs.pop_front().unwrap() {
                 Number(x) => postfix_vec.push(Number(x)),
+                LeftParen => todo!(),
+                RightParen => todo!(),
                 input => match operator_stack.pop() {
                     Some(previous) => {
                         if previous >= input {

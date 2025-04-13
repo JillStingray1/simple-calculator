@@ -6,6 +6,8 @@ pub enum Inputs {
     Subtract,
     Multiply,
     Divide,
+    LeftParen,
+    RightParen,
 }
 
 impl Inputs {
@@ -13,6 +15,8 @@ impl Inputs {
         use Inputs::*;
         match *self {
             Number(_) => 0,
+            LeftParen => 0,
+            RightParen => 0,
             Add => 1,
             Subtract => 1,
             Multiply => 2,
