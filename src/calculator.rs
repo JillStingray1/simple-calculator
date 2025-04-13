@@ -82,6 +82,14 @@ impl Calculator {
                     self.inputs.push_back(input);
                 }
             },
+            LeftParen => {
+                self.update_display(&input);
+                self.inputs.push_back(input);
+            }
+            RightParen => {
+                self.update_display(&input);
+                self.inputs.push_back(input);
+            }
             _ => {
                 match self.inputs.pop_back() {
                     Some(Number(previous)) => {

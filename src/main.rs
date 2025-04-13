@@ -76,7 +76,7 @@ impl App for Calculator {
                     .add_sized([100.0, 50.0], egui::Button::new("("))
                     .clicked()
                 {
-                    self.add_input(RightParen)
+                    self.add_input(LeftParen)
                 }
                 ui.end_row();
                 if ui
@@ -104,10 +104,10 @@ impl App for Calculator {
                     self.add_input(Add)
                 }
                 if ui
-                    .add_sized([100.0, 50.0], egui::Button::new("("))
+                    .add_sized([100.0, 50.0], egui::Button::new(")"))
                     .clicked()
                 {
-                    self.add_input(LeftParen)
+                    self.add_input(RightParen)
                 }
                 ui.end_row();
                 if ui
